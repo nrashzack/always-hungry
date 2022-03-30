@@ -1,26 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../Styles/Recipe.css";
+import "../Styles/Menu.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
 import Ingredients from "../Component/Ingredients";
 import HowTo from "../Component/HowTo";
 import RecipeContent from "../Component/RecipeContent";
 import Video from "../Component/Video";
-import Suggested from "../Component/Suggested";
-import {
-  BrowserRouter,
-  Route,
-  Switch,
-  Link,
-  useLocation,
-} from "react-router-dom";
+import { Cart } from "../Context";
+import { useLocation } from "react-router-dom";
 
 import MenuItem from "../Component/MenuItem.js";
+import heart from "../Assets/heart02.png";
+import favedHeart from "../Assets/full_heart.png";
 
 function Recipe() {
-  console.log("inside recipe ");
+  const { cart, setCart } = useContext(Cart);
   // obtain meal data sent
   const location = useLocation();
+  const mealObject = location.state?.meal;
+  const mealData = mealObject.meal;
 
   // states
   const [meal, setMeal] = React.useState({});
@@ -29,12 +28,13 @@ function Recipe() {
   const [mealYouTubeLink, setMealYouTubeLink] = React.useState("");
   const [similarMeals, setSimilarMeals] = React.useState([]);
 
+  // shuffle and array
   const shuffle = (array) => {
     let currentIndex = array.length,
       randomIndex;
 
     // While there remain elements to shuffle...
-    while (currentIndex != 0) {
+    while (currentIndex !== 0) {
       // Pick a remaining element...
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
@@ -52,9 +52,6 @@ function Recipe() {
   // update recipe when meal changes
   React.useEffect(() => {
     // const location = useLocation();
-    const mealObject = location.state?.meal;
-    const mealData = mealObject.meal;
-    console.log("meal dtaa: " + JSON.stringify(location.state?.meal));
 
     // retrieve full details of the meal
     let apiAddress = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
@@ -105,15 +102,12 @@ function Recipe() {
       setMealYouTubeLink("");
     }
 
+    // get similar meals based on category of current meal
     if (meal.strCategory) {
       let categoryName = meal.strCategory;
       let addressGetMealOnCategory =
         "https://www.themealdb.com/api/json/v1/1/filter.php?c=";
       let fullAddress = addressGetMealOnCategory + categoryName;
-
-      console.log(
-        `categoryname: ${categoryName}, apifulladdress: ${fullAddress}`
-      );
 
       fetch(fullAddress)
         .then((data) => {
@@ -129,7 +123,6 @@ function Recipe() {
           receivedMeals = receivedMeals.slice(0, 3);
           setSimilarMeals([]);
           setSimilarMeals(receivedMeals);
-          // console.log("meals: " + JSON.stringify(dataJson.meals, null, 2));
         });
     }
   }, [meal]);
@@ -137,7 +130,47 @@ function Recipe() {
     <div>
       <div className="Recipe-page">
         <div className="Recipe-Image-box">
-          <img className="recipe-img" src={meal.strMealThumb}></img>
+          <img
+            className="recipe-img"
+            src={meal.strMealThumb}
+            alt={meal.strMeal}
+          ></img>
+          <div>
+            {cart.some((x) => x.idMeal === meal.idMeal) ? (
+              <button
+                className="remove removeFav"
+                onClick={() => {
+                  setCart(cart.filter((c) => c.idMeal !== mealData.idMeal));
+                  localStorage.removeItem(mealData.idMeal);
+                }}
+              >
+                {/* Remove from Favourites */}
+
+                <div className="fav-window">
+                  <div className="fav-button-text">Remove from Favourites</div>
+                </div>
+                <img className="fav-image" src={favedHeart} alt="favorited" />
+              </button>
+            ) : (
+              <button
+                className="add addFav"
+                onClick={() => {
+                  setCart([...cart, mealData]);
+                  localStorage.setItem(
+                    mealData.idMeal,
+                    JSON.stringify(mealData)
+                  );
+                }}
+              >
+                {/* Add to Favourites */}
+
+                <div className="fav-window">
+                  <div className="fav-button-text">Add to Favourites</div>
+                </div>
+                <img className="fav-image" src={heart} alt="add to favorites" />
+              </button>
+            )}
+          </div>
         </div>
         <div className="Ingredients-box">
           <div>
@@ -162,18 +195,27 @@ function Recipe() {
         </div>
       </div>
       <div>
-        <div>
-          {similarMeals.map((meal, index) => {
-            return (
-              <MenuItem
-                key={index}
-                meal={meal}
-                image={meal.strMealThumb}
-                name={meal.strMeal}
-                category={meal.strCategory}
-              />
-            );
-          })}
+        <div className="menu-text">
+          <h2>
+            <u>Similar recipe for you!</u>
+          </h2>
+          <div className="menu-item">
+            {/* <div className="similar-meal">
+            <h2>similar meals!</h2>
+          </div> */}
+
+            {similarMeals.map((meal, index) => {
+              return (
+                <MenuItem
+                  key={index}
+                  meal={meal}
+                  image={meal.strMealThumb}
+                  name={meal.strMeal}
+                  category={meal.strCategory}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

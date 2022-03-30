@@ -1,6 +1,5 @@
 import React from "react";
 import Carousel from "react-elastic-carousel";
-import Apam from "../Assets/apambalik.jpg";
 import "../Styles/category.css";
 
 const breakPoints = [
@@ -44,7 +43,11 @@ function Category({ passResult }) {
   }, [category]);
 
   React.useEffect(() => {
-    passResult(meals);
+    if (meals === 0 || meals === null) {
+      // passResult(null);
+    } else {
+      passResult(meals);
+    }
   }, [meals]);
 
   const clickCategory = (category) => {
@@ -75,90 +78,6 @@ function Category({ passResult }) {
               </div>
             );
           })}
-          {/* <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Chicken</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Chicken</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div>
-          <div>
-            <button className="card">
-              <img src={Apam} />
-            </button>
-            <p className="cat">Beef</p>
-          </div> */}
         </Carousel>
       </div>
     </>

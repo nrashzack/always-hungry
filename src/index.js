@@ -1,11 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Recipe from "./Recipe.jsx";
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-// import { BrowserRouter } from "react-router-dom";
+import Context from "./Context";
 import "./index.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap-css-only/css/bootstrap.min.css";
@@ -14,17 +12,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <BrowserRouter>
-      <Switch>
-        <Route exact path="/"> */}
-    <App />
-    {/* </Route>
-
-        <Route path="/recipe">
-          <Recipe />
-        </Route>
-      </Switch>
-    </BrowserRouter> */}
+    <Context>
+      <App />
+    </Context>
   </React.StrictMode>,
   document.getElementById("root")
 );
